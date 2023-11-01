@@ -8,3 +8,11 @@ div.todo-item > div {
     display: flex;
     gap: 20px;
 }
+
+div.todo-item .done {
+    color: grey;
+}
+
+div.todo-item label.done {
+    text-decoration: line-through;
+}

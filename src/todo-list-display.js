@@ -1,15 +1,11 @@
 import TL from './todo-list.js';
+import {todoComplete, hyphenator} from './todo-list-functions.js';
 
 export default function displayTodoList() {
     const todoList = TL();
     const body = document.querySelector('body');
     const container = document.createElement('div');
     body.append(container);
-
-    //create function to hyphenate strings
-    const hyphenator = (string) => {
-        return string.split(' ').join('-');
-    }
     
     //render todo items
     todoList.list.forEach((item) => {
@@ -20,12 +16,18 @@ export default function displayTodoList() {
     
         //create sub-container div
         const leftDiv = document.createElement('div');
+        leftDiv.classList.add('todo-left');
         todoItem.append(leftDiv);
         //create input
         const todoInput = document.createElement('input');
         todoInput.setAttribute('type', 'checkbox');
         todoInput.setAttribute('id', hyphenator(item.title));
         todoInput.setAttribute('name', hyphenator(item.title));
+        // when user checks or unchecks a checkbox, update relevant properties
+        todoInput.addEventListener('click', () => {
+            todoComplete(item, todoItem, todoInput, todoLabel,
+                    todoDetails, todoDate, todoDelete, todoList);
+        })
         leftDiv.append(todoInput);
         //create label
         const todoLabel = document.createElement('label');
@@ -35,9 +37,11 @@ export default function displayTodoList() {
     
         //create sub-container div
         const rightDiv = document.createElement('div');
+        rightDiv.classList.add('todo-right');
         todoItem.append(rightDiv);
         //create "details" button
         const todoDetails = document.createElement('button');
+        todoDetails.classList.add('details');
         todoDetails.textContent = 'Details';
         rightDiv.append(todoDetails);
         //create div to show date
@@ -46,6 +50,7 @@ export default function displayTodoList() {
         rightDiv.append(todoDate);
         //create "delete" button
         const todoDelete = document.createElement('button');
+        todoDelete.classList.add('delete');
         todoDelete.textContent = 'Delete';
         rightDiv.append(todoDelete);
     })
