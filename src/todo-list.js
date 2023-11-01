@@ -7,6 +7,12 @@ export default function TodoList() {
             description: 'firm bristle; colgate',
             dueDate: 'Oct 30, 2023',
             priority: 'high',
+        },
+        {
+            title: 'get dressed',
+            description: 'singlet',
+            dueDate: 'Oct 31, 2023',
+            priority: 'high',
         }
     ];
     //Function to add items to list
@@ -18,7 +24,7 @@ export default function TodoList() {
         list.forEach((todo) => console.log(todo));
     }
 
-    return { addTodo, printList };
+    return { list, addTodo, printList };
 }
 
 function TodoItem(title, description, dueDate, priority) {

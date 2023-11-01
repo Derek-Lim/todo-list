@@ -1,8 +1,4 @@
 import './style.css';
-import TodoList from './todo-list.js';
+import * as combine from './combine.js';
 
-const list = TodoList();
-
-//confirm that methods work
-list.addTodo('get dressed', 'singlet', 'Oct 31', 'high');
-list.printList();
+combine.DTL();
