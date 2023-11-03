@@ -37,6 +37,7 @@ function TodoItem(todoTitle, todoDescription, todoDueDate, todoPriority) {
     const description = todoDescription;
     const dueDate = todoDueDate;
     const priority = todoPriority;
+    const done = false;
 
-    return { title, description, dueDate, priority };
+    return { title, description, dueDate, priority, done };
 }

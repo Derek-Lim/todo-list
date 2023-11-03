@@ -17,7 +17,11 @@ export function DisplayTodoList() {
         const todoItem = document.createElement('div');
         todoItem.classList.add('todo-item');
         container.append(todoItem);
-    
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoItem.classList.add('done');
+        }
+
         //create sub-sub-container div
         const leftDiv = document.createElement('div');
         leftDiv.classList.add('todo-left');
@@ -33,11 +37,19 @@ export function DisplayTodoList() {
                     todoDetails, todoDate, todoDelete, TodoList);
         })
         leftDiv.append(todoInput);
+        //if item is marked done, make sure to reflect that
+        if (item.done === true) {
+            todoInput.checked = true;
+        }
         //create label
         const todoLabel = document.createElement('label');
         todoLabel.textContent = item.title;
         todoLabel.setAttribute('for', hyphenator(item.title));
         leftDiv.append(todoLabel);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoLabel.classList.add('done');
+        }
     
         //create sub-sub-container div
         const rightDiv = document.createElement('div');
@@ -48,15 +60,27 @@ export function DisplayTodoList() {
         todoDetails.classList.add('details');
         todoDetails.textContent = 'Details';
         rightDiv.append(todoDetails);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoDetails.classList.add('done');
+        }
         //create div to show date
         const todoDate = document.createElement('div');
         todoDate.textContent = item.dueDate;
         rightDiv.append(todoDate);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoDate.classList.add('done');
+        }
         //create "delete" button
         const todoDelete = document.createElement('button');
         todoDelete.classList.add('delete');
         todoDelete.textContent = 'Delete';
         rightDiv.append(todoDelete);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoDelete.classList.add('done');
+        }
     })
 }
 
@@ -88,7 +112,6 @@ function todoComplete(item, todoItem, todoInput, todoLabel,
         todoDelete.classList.add('done');
         //change "done" property to true
         TodoList.markDone(item);
-        // TodoList.markDone(item);
     } else if (todoInput.checked === false) {
         //remove classes to remove style change through CSS
         todoItem.classList.remove('done');
@@ -98,7 +121,6 @@ function todoComplete(item, todoItem, todoInput, todoLabel,
         todoDelete.classList.remove('done');
         //change "done" property back to false
         TodoList.markUndone(item);
-        // TodoList.markUndone(item);
     }
 }
 
