@@ -1,44 +1,42 @@
 export default function TodoList() {
     //Array to store todo items
     const list = [
-        //Todo list with one default item
+        //Todo list with default items
         {
             title: 'brush teeth',
             description: 'firm bristle; colgate',
-            dueDate: 'Oct 30, 2023',
+            dueDate: '2023-10-30',
             priority: 'high',
             done: false,
         },
         {
             title: 'get dressed',
             description: 'singlet',
-            dueDate: 'Oct 31, 2023',
+            dueDate: '2023-10-31',
             priority: 'high',
             done: false,
         }
     ];
+
+    const getList = () => list;
+
     //Function to add items to list
     const addTodo = (title, description, dueDate, priority) => {
         list.push(TodoItem(title, description, dueDate, priority));
     }
-    
+
     //Keep track of whether tasks are completed
     const markDone = ((todo) => todo.done = true);
     const markUndone = ((todo) => todo.done = false);
 
-    //Console.log items in list
-    const printList = () => {
-        list.forEach((todo) => console.log(todo));
-    }
-
-    return { list, addTodo, printList, markDone, markUndone };
+    return { getList, addTodo, markDone, markUndone };
 }
 
-function TodoItem(title, description, dueDate, priority) {
-    const todoTitle = title;
-    const todoDescription = description;
-    const todoDueDate = dueDate;
-    const todoPriority = priority;
+function TodoItem(todoTitle, todoDescription, todoDueDate, todoPriority) {
+    const title = todoTitle;
+    const description = todoDescription;
+    const dueDate = todoDueDate;
+    const priority = todoPriority;
 
-    return { todoTitle, todoDescription, todoDueDate, todoPriority };
+    return { title, description, dueDate, priority };
 }

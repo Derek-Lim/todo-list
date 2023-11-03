@@ -1,3 +1,5 @@
-import * as combine from './combine.js';
+import './style.css';
+import { DisplayTodoList, addTodoButton } from './todo-list-display.js';
 
-combine.DTL();
+DisplayTodoList();
+addTodoButton();
