@@ -12,7 +12,7 @@ export function DisplayTodoList() {
     //clear todo list
     container.textContent = '';
     //render todo items
-    list.forEach((item) => {
+    list.forEach((item, index) => {
         //create sub-container div
         const todoItem = document.createElement('div');
         todoItem.classList.add('todo-item');
@@ -76,6 +76,11 @@ export function DisplayTodoList() {
         const todoDelete = document.createElement('button');
         todoDelete.classList.add('delete');
         todoDelete.textContent = 'Delete';
+        //if user clicks "delete", remove item from list, and update screen
+        todoDelete.addEventListener('click', () => {
+            list.splice(index, 1);
+            DisplayTodoList();
+        })
         rightDiv.append(todoDelete);
         //if item was marked done, make sure to reflect that
         if (item.done === true) {
