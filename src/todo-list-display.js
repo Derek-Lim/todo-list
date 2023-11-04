@@ -16,6 +16,7 @@ export function DisplayTodoList() {
         //create sub-container div
         const todoItem = document.createElement('div');
         todoItem.classList.add('todo-item');
+        todoItem.classList.add(hyphenator(item.title));
         container.append(todoItem);
         //if item was marked done, make sure to reflect that
         if (item.done === true) {
@@ -59,6 +60,10 @@ export function DisplayTodoList() {
         const todoDetails = document.createElement('button');
         todoDetails.classList.add('details');
         todoDetails.textContent = 'Details';
+        //if user clicks "details", show user details, and allow editing
+        todoDetails.addEventListener('click', () => {
+            editTodoForm(item, index);
+        })
         rightDiv.append(todoDetails);
         //if item was marked done, make sure to reflect that
         if (item.done === true) {
@@ -220,6 +225,120 @@ function newTodoForm(container) {
                 document.getElementById('duedate').value,
                 document.getElementById('priority').value,
             )
+            //remove form
+            form.remove();
+            //update screen to display latest todo list
+            DisplayTodoList();
+        }
+    })
+}
+
+function editTodoForm(item, index) {
+    const form = document.createElement('form');
+    const todoItem = document.querySelector(`.${hyphenator(item.title)}`)
+    todoItem.classList.add('edit');
+    todoItem.append(form);
+
+    //create label for title
+    const titleLabel = document.createElement('label');
+    titleLabel.textContent = 'Title: ';
+    titleLabel.setAttribute('for', 'title');
+    form.append(titleLabel);
+    //create input for title
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.name = 'title';
+    titleInput.id = 'title';
+    titleInput.setAttribute('value', item.title);
+    form.append(titleInput);
+
+    //create label for description
+    const descriptionLabel = document.createElement('label');
+    descriptionLabel.textContent = 'Description: ';
+    descriptionLabel.setAttribute('for', 'description');
+    form.append(descriptionLabel);
+    //create input for description
+    const descriptionInput = document.createElement('input');
+    descriptionInput.type = 'text';
+    descriptionInput.name = 'description';
+    descriptionInput.id = 'description';
+    descriptionInput.setAttribute('value', item.description);
+    form.append(descriptionInput);
+
+    //create label for duedate
+    const dueDateLabel = document.createElement('label');
+    dueDateLabel.textContent = 'Due-date: ';
+    dueDateLabel.setAttribute('for', 'duedate');
+    form.append(dueDateLabel);
+    //create input for duedate
+    const dueDateInput = document.createElement('input');
+    dueDateInput.type = 'date';
+    dueDateInput.name = 'duedate';
+    dueDateInput.id = 'duedate';
+    dueDateInput.setAttribute('value', item.dueDate);
+    form.append(dueDateInput);
+
+    //create label for priority
+    const priorityLabel = document.createElement('label');
+    priorityLabel.textContent = 'Priority: ';
+    priorityLabel.setAttribute('for', 'priority');
+    form.append(priorityLabel);
+    //create dropdown for priority
+    const priorityDropdown = document.createElement('select');
+    priorityDropdown.id = 'priority';
+    form.append(priorityDropdown);
+    //create "high" option for dropdown
+    const highOption = document.createElement('option');
+    highOption.value = 'high';
+    highOption.textContent = 'high';
+    priorityDropdown.append(highOption);
+    //create "medium" option for dropdown
+    const mediumOption = document.createElement('option');
+    mediumOption.value = 'medium';
+    mediumOption.textContent = 'medium';
+    priorityDropdown.append(mediumOption);
+    //create "low" option for dropdown
+    const lowOption = document.createElement('option');
+    lowOption.value = 'low';
+    lowOption.textContent = 'low';
+    priorityDropdown.append(lowOption);
+    //preselect priority value that user previously set
+    if (item.priority === 'high') {
+        highOption.setAttribute('selected', 'selected');
+    } else if (item.priority === 'medium') {
+        mediumOption.setAttribute('selected', 'selected');
+    } else if (item.priority === 'low') {
+        lowOption.setAttribute('selected', 'selected');
+    }
+
+    //create submit button to update todo
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Confirm Edit';
+    form.append(submitButton);
+    //submit button will add todo to the todo list
+    submitButton.addEventListener('click', () => {
+        //prevent page refresh
+        preventRefresh();
+        //make sure user inputs title before submitting
+        if(document.getElementById('title').value === '') {
+            alert('Please input title.');
+        //make sure user inputs description before submitting
+        } else if (document.getElementById('description').value === '') {
+            alert('Please input description.');
+        //make sure user inputs duedate before submitting
+        } else if (document.getElementById('duedate').value === '') {
+            alert('Please input due-date.');
+        //if all form fields are filled, add todo item to the list
+        } else {
+            //remove original todo item, and add new item
+            list.splice(index, 1, {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                dueDate: document.getElementById('duedate').value,
+                priority: document.getElementById('priority').value,
+                done: false,
+            });
             //remove form
             form.remove();
             //update screen to display latest todo list
