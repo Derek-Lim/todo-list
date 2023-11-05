@@ -38,11 +38,23 @@ div.todo-list {
 }
 
 div.todo-item {
-    border: 2px solid black;
     display: flex;
     justify-content: space-between;
     background-color: lightgrey;
     color: black;
+    padding: 10px;
+}
+
+div.todo-item.high {
+    border: 2px solid red;
+}
+
+div.todo-item.medium {
+    border: 2px solid orange;
+}
+
+div.todo-item.low {
+    border: 2px solid yellow;
 }
 
 div.todo-item > div {

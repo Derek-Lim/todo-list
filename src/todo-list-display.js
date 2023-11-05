@@ -17,6 +17,14 @@ export function DisplayTodoList() {
         const todoItem = document.createElement('div');
         todoItem.classList.add('todo-item');
         todoItem.classList.add(hyphenator(item.title));
+        //add class to select items to change border color based on priority
+        if (item.priority === 'high') {
+            todoItem.classList.add('high');
+        } else if (item.priority === 'medium') {
+            todoItem.classList.add('medium');
+        } else if (item.priority === 'low') {
+            todoItem.classList.add('low');
+        }
         container.append(todoItem);
         //if item was marked done, make sure to reflect that
         if (item.done === true) {
