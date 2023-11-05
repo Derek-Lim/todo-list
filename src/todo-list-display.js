@@ -5,7 +5,7 @@ const list = TodoList.getList();
 
 const body = document.querySelector('body');
 const container = document.createElement('div');
-container.classList.add()
+container.classList.add('todo-list')
 body.append(container);
 
 export function DisplayTodoList() {
@@ -100,13 +100,14 @@ const hyphenator = (string) => {
 }
 
 export function addTodoButton() {
+    const sidebar = document.querySelector('.sidebar');
     const todoButton = document.createElement('button');
     todoButton.classList.add('add-todo-button');
     todoButton.textContent = 'Add Todo';
     todoButton.addEventListener('click', () => {
         newTodoForm(body);
     })
-    body.append(todoButton);
+    sidebar.append(todoButton);
 }
 
 // When user checks or unchecks a checkbox,
@@ -135,8 +136,9 @@ function todoComplete(item, todoItem, todoInput, todoLabel,
 }
 
 function newTodoForm(container) {
+    const sidebar = document.querySelector('.sidebar');
     const form = document.createElement('form');
-    container.append(form);
+    sidebar.append(form);
 
     //create label for title
     const titleLabel = document.createElement('label');
