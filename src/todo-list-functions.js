@@ -258,6 +258,16 @@ function newTodoForm() {
             displayAllList();
         }
     })
+
+    //create cancel button
+    const cancelButton = document.createElement('button');
+    cancelButton.type = 'text';
+    cancelButton.textContent = 'Cancel';
+    form.append(cancelButton);
+    //cancel button will remove form
+    cancelButton.addEventListener('click', () => {
+        form.remove();
+    })
 }
 
 function editTodoForm(item, index) {
@@ -268,7 +278,7 @@ function editTodoForm(item, index) {
     if (previousForm) {
         previousForm.remove();
     }
-    
+
     const todoItem = document.querySelector(`.${hyphenator(item.title)}`)
     todoItem.classList.add('edit');
     todoItem.append(form);
