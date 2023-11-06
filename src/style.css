@@ -29,7 +29,8 @@ div.sidebar {
     font-weight: 900;
 }
 
-.add-todo-button {
+.add-todo-button,
+.add-project-button {
     border-radius: 10px;
     font-size: 20px;
 }

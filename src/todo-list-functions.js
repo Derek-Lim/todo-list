@@ -104,7 +104,7 @@ export function DisplayTodoList(l) {
 
 //create function to hyphenate strings
 const hyphenator = (string) => {
-    return string.split(' ').join('-');
+    return string.split(' ').join('-').toLowerCase();
 }
 
 export function addTodoButton() {
@@ -548,4 +548,137 @@ export function displayAllList() {
     projectAll.classList.add('selected');
     //display all items
     DisplayTodoList(list);
+}
+
+export function addProjectButton() {
+    const sidebar = document.querySelector('.sidebar');
+    const projectButton = document.createElement('button');
+    projectButton.classList.add('add-project-button');
+    projectButton.textContent = 'Add Project';
+    projectButton.addEventListener('click', () => {
+        newProjectForm(body);
+    })
+    sidebar.append(projectButton);
+}
+
+function newProjectForm() {
+    const sidebar = document.querySelector('.sidebar');
+
+    //prevent multiple forms if user clicks "add todo" multiple times
+    const previousForm = document.querySelector('.sidebar > form');
+    if (previousForm) {
+        previousForm.remove();
+    }
+
+    const form = document.createElement('form');
+    sidebar.append(form);
+
+    //create label for project name
+    const projectLabel = document.createElement('label');
+    projectLabel.textContent = 'Project: ';
+    projectLabel.setAttribute('for', 'project');
+    form.append(projectLabel);
+    //create input for project name
+    const projectInput = document.createElement('input');
+    projectInput.type = 'text';
+    projectInput.name = 'project';
+    projectInput.id = 'project';
+    form.append(projectInput);
+
+    //create submit button to add project
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Submit';
+    form.append(submitButton);
+    //submit button will add project
+    submitButton.addEventListener('click', () => {
+        //prevent page refresh
+        preventRefresh();
+        //make sure user input is not empty before submitting
+        if(document.getElementById('project').value === '') {
+            alert('Project name cannot be blank.');
+        //make sure user inputs duedate before submitting
+        } else {
+            //create div to add to sidebar
+            const newProject = document.createElement('div');
+            newProject.textContent = `${document.getElementById('project').value}`;
+            newProject.classList.add(`${hyphenator(document.getElementById('project').value)}`);
+            //save project name for future use
+            const projectName = document.getElementById('project').value;
+            //remove form
+            form.remove();
+            //remove buttons
+            const button1 = document.querySelector('.add-todo-button');
+            button1.remove();
+            const button2 = document.querySelector('.add-project-button');
+            button2.remove();
+            //add item, then re-add the buttons (to make buttons appear below projects)
+            sidebar.append(newProject);
+            addTodoButton();
+            addProjectButton();
+
+            newProject.addEventListener('click', () => {
+                //remove class from previously selected item
+                const previouslySelectedItem = document.querySelector('.selected');
+                if (previouslySelectedItem) {
+                    previouslySelectedItem.classList.remove('selected');
+                }
+                //add class to div to show when it is selected
+                newProject.classList.add('selected');
+
+                //filter through list to select all todos in stated category
+                const listProject = list.filter((todo) => todo.project === projectName);
+                
+                //clear todo list
+                container.textContent = '';
+                //render todo items
+                listProject.forEach((item) => {
+                    //create sub-container div
+                    const todoItem = document.createElement('div');
+                    todoItem.classList.add('todo-item');
+                    todoItem.classList.add(hyphenator(item.title));
+                    //add class to select items to change border color based on priority
+                    if (item.priority === 'high') {
+                        todoItem.classList.add('high');
+                    } else if (item.priority === 'medium') {
+                        todoItem.classList.add('medium');
+                    } else if (item.priority === 'low') {
+                        todoItem.classList.add('low');
+                    }
+                    container.append(todoItem);
+                    //if item was marked done, make sure to reflect that
+                    if (item.done === true) {
+                        todoItem.classList.add('done');
+                    }
+            
+                    //create sub-sub-container div
+                    const leftDiv = document.createElement('div');
+                    leftDiv.classList.add('todo-left');
+                    todoItem.append(leftDiv);
+                    //create label
+                    const todoLabel = document.createElement('label');
+                    todoLabel.textContent = item.title;
+                    todoLabel.setAttribute('for', hyphenator(item.title));
+                    leftDiv.append(todoLabel);
+                    //if item was marked done, make sure to reflect that
+                    if (item.done === true) {
+                        todoLabel.classList.add('done');
+                    }
+                
+                    //create sub-sub-container div
+                    const rightDiv = document.createElement('div');
+                    rightDiv.classList.add('todo-right');
+                    todoItem.append(rightDiv);
+                    //create div to show date
+                    const todoDate = document.createElement('div');
+                    todoDate.textContent = item.dueDate;
+                    rightDiv.append(todoDate);
+                    //if item was marked done, make sure to reflect that
+                    if (item.done === true) {
+                        todoDate.classList.add('done');
+                    }
+                })
+            })
+        }
+    })
 }
