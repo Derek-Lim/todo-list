@@ -75,6 +75,7 @@ div.todo-item label.done {
 }
 
 form {
+    font-size: 20px;
     border: 1px solid black;
     width: max(150px, 85%);
     display: flex;

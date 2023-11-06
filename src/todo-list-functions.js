@@ -145,6 +145,13 @@ function todoComplete(item, todoItem, todoInput, todoLabel,
 
 function newTodoForm() {
     const sidebar = document.querySelector('.sidebar');
+
+    //prevent multiple forms if user clicks "add todo" multiple times
+    const previousForm = document.querySelector('.sidebar > form');
+    if (previousForm) {
+        previousForm.remove();
+    }
+
     const form = document.createElement('form');
     sidebar.append(form);
 
@@ -254,8 +261,14 @@ function newTodoForm() {
 }
 
 function editTodoForm(item, index) {
-
     const form = document.createElement('form');
+
+    //prevent multiple forms if user clicks "details" multiple times
+    const previousForm = document.querySelector('.todo-item > form');
+    if (previousForm) {
+        previousForm.remove();
+    }
+    
     const todoItem = document.querySelector(`.${hyphenator(item.title)}`)
     todoItem.classList.add('edit');
     todoItem.append(form);
