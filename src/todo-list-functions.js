@@ -8,11 +8,11 @@ const container = document.createElement('div');
 container.classList.add('todo-list')
 body.append(container);
 
-export function DisplayTodoList() {
+export function DisplayTodoList(l) {
     //clear todo list
     container.textContent = '';
     //render todo items
-    list.forEach((item, index) => {
+    l.forEach((item, index) => {
         //create sub-container div
         const todoItem = document.createElement('div');
         todoItem.classList.add('todo-item');
@@ -91,8 +91,8 @@ export function DisplayTodoList() {
         todoDelete.textContent = 'Delete';
         //if user clicks "delete", remove item from list, and update screen
         todoDelete.addEventListener('click', () => {
-            list.splice(index, 1);
-            DisplayTodoList();
+            l.splice(index, 1);
+            DisplayTodoList(l);
         })
         rightDiv.append(todoDelete);
         //if item was marked done, make sure to reflect that
@@ -143,7 +143,7 @@ function todoComplete(item, todoItem, todoInput, todoLabel,
     }
 }
 
-function newTodoForm(container) {
+function newTodoForm() {
     const sidebar = document.querySelector('.sidebar');
     const form = document.createElement('form');
     sidebar.append(form);
@@ -159,6 +159,18 @@ function newTodoForm(container) {
     titleInput.name = 'title';
     titleInput.id = 'title';
     form.append(titleInput);
+
+    //create label for project
+    const projectLabel = document.createElement('label');
+    projectLabel.textContent = 'Project: ';
+    projectLabel.setAttribute('for', 'project');
+    form.append(projectLabel);
+    //create input for project
+    const projectInput = document.createElement('input');
+    projectInput.type = 'text';
+    projectInput.name = 'project';
+    projectInput.id = 'project';
+    form.append(projectInput);
 
     //create label for description
     const descriptionLabel = document.createElement('label');
@@ -221,29 +233,28 @@ function newTodoForm(container) {
         //make sure user inputs title before submitting
         if(document.getElementById('title').value === '') {
             alert('Please input title.');
-        //make sure user inputs description before submitting
-        } else if (document.getElementById('description').value === '') {
-            alert('Please input description.');
         //make sure user inputs duedate before submitting
         } else if (document.getElementById('duedate').value === '') {
             alert('Please input due-date.');
-        //if all form fields are filled, add todo item to the list
+        //if all required form fields are filled, add todo item to the list
         } else {
-            TodoList.addTodo(// TodoList.addTodo(
+            TodoList.addTodo(
                 document.getElementById('title').value,
                 document.getElementById('description').value,
                 document.getElementById('duedate').value,
                 document.getElementById('priority').value,
+                document.getElementById('project').value,
             )
             //remove form
             form.remove();
             //update screen to display latest todo list
-            DisplayTodoList();
+            displayAllList();
         }
     })
 }
 
 function editTodoForm(item, index) {
+
     const form = document.createElement('form');
     const todoItem = document.querySelector(`.${hyphenator(item.title)}`)
     todoItem.classList.add('edit');
@@ -261,6 +272,19 @@ function editTodoForm(item, index) {
     titleInput.id = 'title';
     titleInput.setAttribute('value', item.title);
     form.append(titleInput);
+
+    //create label for project
+    const projectLabel = document.createElement('label');
+    projectLabel.textContent = 'Project: ';
+    projectLabel.setAttribute('for', 'project');
+    form.append(projectLabel);
+    //create input for project
+    const projectInput = document.createElement('input');
+    projectInput.type = 'text';
+    projectInput.name = 'project';
+    projectInput.id = 'project';
+    projectInput.setAttribute('value', item.project);
+    form.append(projectInput);
 
     //create label for description
     const descriptionLabel = document.createElement('label');
@@ -333,13 +357,10 @@ function editTodoForm(item, index) {
         //make sure user inputs title before submitting
         if(document.getElementById('title').value === '') {
             alert('Please input title.');
-        //make sure user inputs description before submitting
-        } else if (document.getElementById('description').value === '') {
-            alert('Please input description.');
         //make sure user inputs duedate before submitting
         } else if (document.getElementById('duedate').value === '') {
             alert('Please input due-date.');
-        //if all form fields are filled, add todo item to the list
+        //if all required form fields are filled, add todo item to the list
         } else {
             //remove original todo item, and add new item
             list.splice(index, 1, {
@@ -348,11 +369,12 @@ function editTodoForm(item, index) {
                 dueDate: document.getElementById('duedate').value,
                 priority: document.getElementById('priority').value,
                 done: false,
+                project: document.getElementById('project').value,
             });
             //remove form
             form.remove();
             //update screen to display latest todo list
-            DisplayTodoList();
+            displayAllList();
         }
     })
 }
@@ -363,4 +385,144 @@ function preventRefresh() {
     form.addEventListener('submit', event => {
         event.preventDefault();
     })
+}
+
+export function displayStudyList() {
+    const projectStudy = document.querySelector('.study');
+
+    //remove class from previously selected item
+    const previouslySelectedItem = document.querySelector('.selected');
+    if (previouslySelectedItem) {
+        previouslySelectedItem.classList.remove('selected');
+    }
+    //add class to div to show when it is selected
+    projectStudy.classList.add('selected');
+    //filter the list for items with "study" project
+    const listStudy = list.filter((todo) => todo.project === 'study');
+    //clear todo list
+    container.textContent = '';
+    //render todo items
+    listStudy.forEach((item, index) => {
+        //create sub-container div
+        const todoItem = document.createElement('div');
+        todoItem.classList.add('todo-item');
+        todoItem.classList.add(hyphenator(item.title));
+        //add class to select items to change border color based on priority
+        if (item.priority === 'high') {
+            todoItem.classList.add('high');
+        } else if (item.priority === 'medium') {
+            todoItem.classList.add('medium');
+        } else if (item.priority === 'low') {
+            todoItem.classList.add('low');
+        }
+        container.append(todoItem);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoItem.classList.add('done');
+        }
+
+        //create sub-sub-container div
+        const leftDiv = document.createElement('div');
+        leftDiv.classList.add('todo-left');
+        todoItem.append(leftDiv);
+        //create label
+        const todoLabel = document.createElement('label');
+        todoLabel.textContent = item.title;
+        todoLabel.setAttribute('for', hyphenator(item.title));
+        leftDiv.append(todoLabel);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoLabel.classList.add('done');
+        }
+    
+        //create sub-sub-container div
+        const rightDiv = document.createElement('div');
+        rightDiv.classList.add('todo-right');
+        todoItem.append(rightDiv);
+        //create div to show date
+        const todoDate = document.createElement('div');
+        todoDate.textContent = item.dueDate;
+        rightDiv.append(todoDate);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoDate.classList.add('done');
+        }
+    })
+}
+
+export function displayGymList() {
+    const projectGym = document.querySelector('.gym');
+
+    //remove class from previously selected item
+    const previouslySelectedItem = document.querySelector('.selected');
+    if (previouslySelectedItem) {
+        previouslySelectedItem.classList.remove('selected');
+    }
+    //add class to div to show when it is selected
+    projectGym.classList.add('selected');
+    //filter the list for items with "study" project
+    const listGym = list.filter((todo) => todo.project === 'gym');
+    //clear todo list
+    container.textContent = '';
+    //render todo items
+    listGym.forEach((item, index) => {
+        //create sub-container div
+        const todoItem = document.createElement('div');
+        todoItem.classList.add('todo-item');
+        todoItem.classList.add(hyphenator(item.title));
+        //add class to select items to change border color based on priority
+        if (item.priority === 'high') {
+            todoItem.classList.add('high');
+        } else if (item.priority === 'medium') {
+            todoItem.classList.add('medium');
+        } else if (item.priority === 'low') {
+            todoItem.classList.add('low');
+        }
+        container.append(todoItem);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoItem.classList.add('done');
+        }
+
+        //create sub-sub-container div
+        const leftDiv = document.createElement('div');
+        leftDiv.classList.add('todo-left');
+        todoItem.append(leftDiv);
+        //create label
+        const todoLabel = document.createElement('label');
+        todoLabel.textContent = item.title;
+        todoLabel.setAttribute('for', hyphenator(item.title));
+        leftDiv.append(todoLabel);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoLabel.classList.add('done');
+        }
+    
+        //create sub-sub-container div
+        const rightDiv = document.createElement('div');
+        rightDiv.classList.add('todo-right');
+        todoItem.append(rightDiv);
+        //create div to show date
+        const todoDate = document.createElement('div');
+        todoDate.textContent = item.dueDate;
+        rightDiv.append(todoDate);
+        //if item was marked done, make sure to reflect that
+        if (item.done === true) {
+            todoDate.classList.add('done');
+        }
+    })
+}
+
+export function displayAllList() {
+    const projectAll = document.querySelector('.all');
+
+    //remove class from previously selected item
+    const previouslySelectedItem = document.querySelector('.selected');
+    if (previouslySelectedItem) {
+        previouslySelectedItem.classList.remove('selected');
+    }
+    //add class to div to show when it is selected
+    projectAll.classList.add('selected');
+    //display all items
+    DisplayTodoList(list);
 }
