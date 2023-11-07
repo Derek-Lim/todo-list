@@ -627,7 +627,7 @@ function newProjectForm() {
                 newProject.classList.add('selected');
 
                 //filter through list to select all todos in stated category
-                const listProject = list.filter((todo) => todo.project === projectName);
+                const listProject = list.filter((todo) => todo.project.toLowerCase() === projectName.toLowerCase());
                 
                 //clear todo list
                 container.textContent = '';
