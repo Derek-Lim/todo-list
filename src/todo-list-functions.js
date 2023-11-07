@@ -681,4 +681,13 @@ function newProjectForm() {
             })
         }
     })
+    //create cancel button
+    const cancelButton = document.createElement('button');
+    cancelButton.type = 'text';
+    cancelButton.textContent = 'Cancel';
+    form.append(cancelButton);
+    //cancel button will remove form
+    cancelButton.addEventListener('click', () => {
+        form.remove();
+    })
 }
