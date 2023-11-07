@@ -237,9 +237,15 @@ function newTodoForm() {
     submitButton.addEventListener('click', () => {
         //prevent page refresh
         preventRefresh();
+        //check for todo name duplicates
+        const todoName = document.getElementById('title').value;
+        let todoNames = list.map((item) => item.title);
+        let matchedtodoNames = todoNames.filter((item) => item.toLowerCase() === todoName.toLowerCase());
         //make sure user inputs title before submitting
         if(document.getElementById('title').value === '') {
             alert('Please input title.');
+        } else if (matchedtodoNames.length !== 0) {
+            alert('Todo already exists.');
         //make sure user inputs duedate before submitting
         } else if (document.getElementById('duedate').value === '') {
             alert('Please input due-date.');
