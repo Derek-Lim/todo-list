@@ -750,11 +750,14 @@ function deleteProjectForm() {
     //create options for dropdown
     const projects = document.querySelectorAll('.sidebar > div');
     projects.forEach((project) => {
-        //create option for dropdown
-        const option = document.createElement('option');
-        option.value = `${project.textContent.toLowerCase()}`;
-        option.textContent = `${project.textContent}`;
-        dropdown.append(option);
+        //make sure "All" category is not removable
+        if (project.textContent !== 'All') {
+            //create option for dropdown
+            const option = document.createElement('option');
+            option.value = `${project.textContent.toLowerCase()}`;
+            option.textContent = `${project.textContent}`;
+            dropdown.append(option);
+        }
     })
     //create submit button
     const submit = document.createElement('button');
