@@ -1,11 +1,12 @@
 import './style.css';
 import { displayAllList, displayStudyList, displayGymList,
-            addTodoButton, addProjectButton } from './todo-list-functions.js';
+            addTodoButton, addProjectButton, deleteProjectButton } from './todo-list-functions.js';
 
 //initial render
 displayAllList();
 addTodoButton();
 addProjectButton();
+deleteProjectButton();
 //make "all" div show all projects when clicked
 const projectAll = document.querySelector('.all');
 projectAll.addEventListener('click', () => {

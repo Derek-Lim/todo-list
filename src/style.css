@@ -30,7 +30,8 @@ div.sidebar {
 }
 
 .add-todo-button,
-.add-project-button {
+.add-project-button,
+.delete-project-button {
     border-radius: 10px;
     font-size: 20px;
 }

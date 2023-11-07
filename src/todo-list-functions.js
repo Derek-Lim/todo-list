@@ -600,17 +600,24 @@ function newProjectForm() {
     submitButton.addEventListener('click', () => {
         //prevent page refresh
         preventRefresh();
-        //check for project name duplicates
+        //save user input
         const projectName = document.getElementById('project').value;
-        let projectNames = list.map((item) => item.project);
-        let matchedProjectNames = projectNames.filter((item) => item.toLowerCase() === projectName.toLowerCase());
+
+        const projects = document.querySelectorAll('.sidebar > div');
+        //create array to store list of projects
+        let projectList = [];
+        //add project names to that array
+        projects.forEach((project) => {
+            projectList.push(project.textContent);
+        })
+        //filter through array to match projects with same name as user input
+        let matchedProjectNames = projectList.filter((project) => project.toLowerCase()
+                    === document.getElementById('project').value.toLowerCase());
         //make sure user input is not empty before submitting
         if(document.getElementById('project').value === '') {
             alert('Project name cannot be blank.');
         //make sure project name doesn't already exist
         } else if (matchedProjectNames.length !== 0) {
-            alert('Project already exists.');
-        } else if (projectName.toLowerCase() === 'all') {
             alert('Project already exists.');
         } else {
             //create div to add to sidebar
@@ -624,10 +631,13 @@ function newProjectForm() {
             button1.remove();
             const button2 = document.querySelector('.add-project-button');
             button2.remove();
+            const button3 = document.querySelector('.delete-project-button');
+            button3.remove();
             //add item, then re-add the buttons (to make buttons appear below projects)
             sidebar.append(newProject);
             addTodoButton();
             addProjectButton();
+            deleteProjectButton();
 
             newProject.addEventListener('click', () => {
                 //remove class from previously selected item
@@ -700,6 +710,82 @@ function newProjectForm() {
     form.append(cancelButton);
     //cancel button will remove form
     cancelButton.addEventListener('click', () => {
+        form.remove();
+    })
+}
+
+export function deleteProjectButton() {
+    const sidebar = document.querySelector('.sidebar')
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete Project';
+    deleteButton.classList.add('delete-project-button');
+    sidebar.append(deleteButton);
+
+    deleteButton.addEventListener('click', () => {
+        deleteProjectForm();
+    })
+}
+
+function deleteProjectForm() {
+    const sidebar = document.querySelector('.sidebar');
+
+    //prevent multiple forms if user clicks "add todo" multiple times
+    const previousForm = document.querySelector('.sidebar > form');
+    if (previousForm) {
+        previousForm.remove();
+    }
+
+    const form = document.createElement('form');
+    sidebar.append(form);
+
+    //create label for project remover
+    const label = document.createElement('label');
+    label.textContent = 'Remove: '
+    label.setAttribute('for', 'project');
+    form.append(label);
+    //create dropdown for projects to remove
+    const dropdown = document.createElement('select');
+    dropdown.id = 'project';
+    form.append(dropdown);
+    //create options for dropdown
+    const projects = document.querySelectorAll('.sidebar > div');
+    projects.forEach((project) => {
+        //create option for dropdown
+        const option = document.createElement('option');
+        option.value = `${project.textContent.toLowerCase()}`;
+        option.textContent = `${project.textContent}`;
+        dropdown.append(option);
+    })
+    //create submit button
+    const submit = document.createElement('button');
+    submit.textContent = 'Remove';
+    form.append(submit);
+    submit.addEventListener('click', () => {
+        preventRefresh();
+        //create array to store list of projects
+        let projectList = [];
+        //add project names to that array
+        projects.forEach((project) => {
+            projectList.push(project.textContent);
+        })
+        //filter through array to select selected project
+        const projectToRemove = projectList.filter((project) =>
+        project.toLowerCase() === document.getElementById('project').value.toLowerCase());
+        //take selected project out of the array
+        const projectToDelete = projectToRemove.pop();
+        //select the div that matches the project name and remove it
+        const projectToDiscard = document.querySelector(`.${projectToDelete.toLowerCase()}`);
+        projectToDiscard.remove();
+        //remove form
+        form.remove();
+    })
+    //create cancel button
+    const cancel = document.createElement('button');
+    cancel.type = 'text';
+    cancel.textContent = 'Cancel';
+    form.append(cancel);
+    //button will remove form when clicked
+    cancel.addEventListener('click', () => {
         form.remove();
     })
 }
