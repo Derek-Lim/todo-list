@@ -594,17 +594,23 @@ function newProjectForm() {
     submitButton.addEventListener('click', () => {
         //prevent page refresh
         preventRefresh();
+        //check for project name duplicates
+        const projectName = document.getElementById('project').value;
+        let projectNames = list.map((item) => item.project);
+        let matchedProjectNames = projectNames.filter((item) => item.toLowerCase() === projectName.toLowerCase());
         //make sure user input is not empty before submitting
         if(document.getElementById('project').value === '') {
             alert('Project name cannot be blank.');
-        //make sure user inputs duedate before submitting
+        //make sure project name doesn't already exist
+        } else if (matchedProjectNames.length !== 0) {
+            alert('Project already exists.');
+        } else if (projectName.toLowerCase() === 'all') {
+            alert('Project already exists.');
         } else {
             //create div to add to sidebar
             const newProject = document.createElement('div');
             newProject.textContent = `${document.getElementById('project').value}`;
             newProject.classList.add(`${hyphenator(document.getElementById('project').value)}`);
-            //save project name for future use
-            const projectName = document.getElementById('project').value;
             //remove form
             form.remove();
             //remove buttons
