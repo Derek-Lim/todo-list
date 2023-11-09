@@ -622,7 +622,7 @@ function newProjectForm() {
         } else {
             //create div to add to sidebar
             const newProject = document.createElement('div');
-            newProject.textContent = `${document.getElementById('project').value}`;
+            newProject.textContent = projectName;
             newProject.classList.add(`${hyphenator(document.getElementById('project').value)}`);
             //remove form
             form.remove();
@@ -701,6 +701,8 @@ function newProjectForm() {
                     }
                 })
             })
+            //store project name in local storage
+            storeProjectsInLocal();
         }
     })
     //create cancel button
@@ -750,8 +752,10 @@ function deleteProjectForm() {
     //create options for dropdown
     const projects = document.querySelectorAll('.sidebar > div');
     projects.forEach((project) => {
-        //make sure "All" category is not removable
-        if (project.textContent !== 'All') {
+        //make sure default categories are not removable
+        if (project.textContent !== 'All' &&
+            project.textContent !== 'Study' &&
+            project.textContent !== 'Gym') {
             //create option for dropdown
             const option = document.createElement('option');
             option.value = `${project.textContent.toLowerCase()}`;
@@ -765,22 +769,31 @@ function deleteProjectForm() {
     form.append(submit);
     submit.addEventListener('click', () => {
         preventRefresh();
-        //create array to store list of projects
-        let projectList = [];
-        //add project names to that array
-        projects.forEach((project) => {
-            projectList.push(project.textContent);
-        })
-        //filter through array to select selected project
-        const projectToRemove = projectList.filter((project) =>
-        project.toLowerCase() === document.getElementById('project').value.toLowerCase());
-        //take selected project out of the array
-        const projectToDelete = projectToRemove.pop();
-        //select the div that matches the project name and remove it
-        const projectToDiscard = document.querySelector(`.${projectToDelete.toLowerCase()}`);
-        projectToDiscard.remove();
-        //remove form
-        form.remove();
+        if (document.getElementById('project').value === '') {
+            form.remove();
+        } else {
+            //create array to store list of projects
+            let projectList = [];
+            //add project names to that array
+            projects.forEach((project) => {
+                projectList.push(project.textContent);
+            })
+            //filter through array to select selected project
+            const projectToRemove = projectList.filter((project) =>
+            project.toLowerCase() === document.getElementById('project').value.toLowerCase());
+            //take selected project out of the array
+            const projectToDelete = projectToRemove.pop();
+            //select the div that matches the project name and remove it
+            const projectToDiscard = document.querySelector(`.${projectToDelete.toLowerCase()}`);
+            projectToDiscard.remove();
+            //remove project from local storage
+            removeProjectFromLocal(document.getElementById('project').value);
+            //update projects in local storage
+            localStorage.clear();
+            storeProjectsInLocal();
+            //remove form
+            form.remove();
+        }
     })
     //create cancel button
     const cancel = document.createElement('button');
@@ -791,4 +804,126 @@ function deleteProjectForm() {
     cancel.addEventListener('click', () => {
         form.remove();
     })
+}
+
+function storeProjectsInLocal() {
+    const createdProjects = document.querySelectorAll('.sidebar > div');
+    createdProjects.forEach((project, index) => {
+        if (project.textContent !== 'All' &&
+            project.textContent !== 'Study' &&
+            project.textContent !== 'Gym') {
+            localStorage.setItem(`project${index - 3}`, project.textContent);
+        }
+    })
+}
+
+function removeProjectFromLocal(project) { 
+    const localStorageProjectKeys = [];
+    const localStorageProjectValues = [];
+    const localStorageKeyAndValueAssociation = {};
+
+    for (let i = 0; i < localStorage.length; i++) {
+        localStorageProjectKeys.push(localStorage.key(i));
+    }
+
+    localStorageProjectKeys.forEach((key) => {
+        const k = localStorage.getItem(key);
+        localStorageProjectValues.push(k);
+        localStorageKeyAndValueAssociation[k] = key;
+    })
+
+    const matchedProjectInArray = localStorageProjectValues.filter((value) => value.toLowerCase() === project);
+    const matchedProject = matchedProjectInArray.pop();
+    const matchedProjectKey = localStorageKeyAndValueAssociation[matchedProject];
+    console.log(localStorage.length);
+    localStorage.removeItem(matchedProjectKey);
+    console.log(localStorage.length);
+}
+
+export function recreateProjectsFromLocal() {
+    for (let i = 0; i < localStorage.length; i++) {
+        const sidebar = document.querySelector('.sidebar');
+        //get name which was stored
+        const projectName = localStorage.getItem(`project${i}`);
+
+        //create div to add to sidebar
+        const newProject = document.createElement('div');
+        newProject.textContent = projectName;
+        newProject.classList.add(`${hyphenator(projectName)}`);
+        //remove buttons
+        const button1 = document.querySelector('.add-todo-button');
+        button1.remove();
+        const button2 = document.querySelector('.add-project-button');
+        button2.remove();
+        const button3 = document.querySelector('.delete-project-button');
+        button3.remove();
+        //add item, then re-add the buttons (to make buttons appear below projects)
+        sidebar.append(newProject);
+        addTodoButton();
+        addProjectButton();
+        deleteProjectButton();
+
+        newProject.addEventListener('click', () => {
+            //remove class from previously selected item
+            const previouslySelectedItem = document.querySelector('.selected');
+            if (previouslySelectedItem) {
+                previouslySelectedItem.classList.remove('selected');
+            }
+            //add class to div to show when it is selected
+            newProject.classList.add('selected');
+
+            //filter through list to select all todos in stated category
+            const listProject = list.filter((todo) => todo.project.toLowerCase() === projectName.toLowerCase());
+            
+            //clear todo list
+            container.textContent = '';
+            //render todo items
+            listProject.forEach((item) => {
+                //create sub-container div
+                const todoItem = document.createElement('div');
+                todoItem.classList.add('todo-item');
+                todoItem.classList.add(hyphenator(item.title));
+                //add class to select items to change border color based on priority
+                if (item.priority === 'high') {
+                    todoItem.classList.add('high');
+                } else if (item.priority === 'medium') {
+                    todoItem.classList.add('medium');
+                } else if (item.priority === 'low') {
+                    todoItem.classList.add('low');
+                }
+                container.append(todoItem);
+                //if item was marked done, make sure to reflect that
+                if (item.done === true) {
+                    todoItem.classList.add('done');
+                }
+        
+                //create sub-sub-container div
+                const leftDiv = document.createElement('div');
+                leftDiv.classList.add('todo-left');
+                todoItem.append(leftDiv);
+                //create label
+                const todoLabel = document.createElement('label');
+                todoLabel.textContent = item.title;
+                todoLabel.setAttribute('for', hyphenator(item.title));
+                leftDiv.append(todoLabel);
+                //if item was marked done, make sure to reflect that
+                if (item.done === true) {
+                    todoLabel.classList.add('done');
+                }
+            
+                //create sub-sub-container div
+                const rightDiv = document.createElement('div');
+                rightDiv.classList.add('todo-right');
+                todoItem.append(rightDiv);
+                //create div to show date
+                const todoDate = document.createElement('div');
+                todoDate.textContent = item.dueDate;
+                rightDiv.append(todoDate);
+                //if item was marked done, make sure to reflect that
+                if (item.done === true) {
+                    todoDate.classList.add('done');
+                }
+            })
+        })
+    }
 }
