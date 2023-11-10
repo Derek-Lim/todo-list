@@ -1,7 +1,7 @@
 import './style.css';
 import { displayAllList, displayStudyList, displayGymList,
             addTodoButton, addProjectButton, deleteProjectButton,
-            recreateProjectsFromLocal} from './todo-list-functions.js';
+            recreateProjectsFromLocal, recreateTodosFromLocal} from './todo-list-functions.js';
 
 //initial render
 displayAllList();
@@ -26,3 +26,4 @@ projectGym.addEventListener('click', () => {
 //render project categories that user previously created upon page close or refresh
 //(which is saved in local storage)
 recreateProjectsFromLocal();
+recreateTodosFromLocal();

@@ -44,6 +44,10 @@ export function DisplayTodoList(l) {
         todoInput.addEventListener('click', () => {
             todoComplete(item, todoItem, todoInput, todoLabel,
                     todoDetails, todoDate, todoDelete, TodoList);
+            //update local storage
+            localStorage.clear();
+            storeProjectsInLocal();
+            storeTodosInLocal();
         })
         leftDiv.append(todoInput);
         //if item is marked done, make sure to reflect that
@@ -92,6 +96,11 @@ export function DisplayTodoList(l) {
         //if user clicks "delete", remove item from list, and update screen
         todoDelete.addEventListener('click', () => {
             l.splice(index, 1);
+            //update storage
+            localStorage.clear();
+            storeProjectsInLocal();
+            storeTodosInLocal();
+            //display latest todo list
             DisplayTodoList(l);
         })
         rightDiv.append(todoDelete);
@@ -262,6 +271,8 @@ function newTodoForm() {
             form.remove();
             //update screen to display latest todo list
             displayAllList();
+            //store todo in local storage
+            storeTodosInLocal();
         }
     })
 
@@ -285,7 +296,7 @@ function editTodoForm(item, index) {
         previousForm.remove();
     }
 
-    const todoItem = document.querySelector(`.${hyphenator(item.title)}`)
+    const todoItem = document.querySelector(`.todo-item.${hyphenator(item.title)}`)
     todoItem.classList.add('edit');
     todoItem.append(form);
 
@@ -404,6 +415,10 @@ function editTodoForm(item, index) {
             form.remove();
             //update screen to display latest todo list
             displayAllList();
+            //update storage
+            localStorage.clear();
+            storeProjectsInLocal();
+            storeTodosInLocal();
         }
     })
 }
@@ -786,11 +801,10 @@ function deleteProjectForm() {
             //select the div that matches the project name and remove it
             const projectToDiscard = document.querySelector(`.${projectToDelete.toLowerCase()}`);
             projectToDiscard.remove();
-            //remove project from local storage
-            removeProjectFromLocal(document.getElementById('project').value);
             //update projects in local storage
             localStorage.clear();
             storeProjectsInLocal();
+            storeTodosInLocal();
             //remove form
             form.remove();
         }
@@ -817,31 +831,16 @@ function storeProjectsInLocal() {
     })
 }
 
-function removeProjectFromLocal(project) { 
+export function recreateProjectsFromLocal() {
     const localStorageProjectKeys = [];
-    const localStorageProjectValues = [];
-    const localStorageKeyAndValueAssociation = {};
 
-    for (let i = 0; i < localStorage.length; i++) {
-        localStorageProjectKeys.push(localStorage.key(i));
-    }
-
-    localStorageProjectKeys.forEach((key) => {
-        const k = localStorage.getItem(key);
-        localStorageProjectValues.push(k);
-        localStorageKeyAndValueAssociation[k] = key;
+    Object.keys(localStorage).forEach(function(key) {
+        if (key.includes('project')) {
+            localStorageProjectKeys.push(key);
+        }
     })
 
-    const matchedProjectInArray = localStorageProjectValues.filter((value) => value.toLowerCase() === project);
-    const matchedProject = matchedProjectInArray.pop();
-    const matchedProjectKey = localStorageKeyAndValueAssociation[matchedProject];
-    console.log(localStorage.length);
-    localStorage.removeItem(matchedProjectKey);
-    console.log(localStorage.length);
-}
-
-export function recreateProjectsFromLocal() {
-    for (let i = 0; i < localStorage.length; i++) {
+    for (let i = 0; i < localStorageProjectKeys.length; i++) {
         const sidebar = document.querySelector('.sidebar');
         //get name which was stored
         const projectName = localStorage.getItem(`project${i}`);
@@ -926,4 +925,32 @@ export function recreateProjectsFromLocal() {
             })
         })
     }
+}
+
+function storeTodosInLocal() {
+    const createdTodos = list;
+    createdTodos.forEach((todo, index) => {
+        if (todo.title !== 'learn webkit' &&
+            todo.title !== 'jog') {
+            localStorage.setItem(`todo${index - 2}`, JSON.stringify(todo));
+        }
+    })
+}
+
+export function recreateTodosFromLocal() {
+    const localStorageProjectKeys = [];
+
+    Object.keys(localStorage).forEach(function(key) {
+        if (key.includes('todo')) {
+            localStorageProjectKeys.push(key);
+        }
+    })
+
+    localStorageProjectKeys.forEach((key) => {
+        //get todo object and add it to the list
+        const todo = JSON.parse(localStorage.getItem(key)) 
+        list.push(todo);
+        //update screen to display latest todo list
+        displayAllList();
+    })
 }
