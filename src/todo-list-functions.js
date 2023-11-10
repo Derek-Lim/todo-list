@@ -73,9 +73,12 @@ export function DisplayTodoList(l) {
         todoDetails.classList.add('details');
         todoDetails.textContent = 'Details';
         //if user clicks "details", show user details, and allow editing
-        todoDetails.addEventListener('click', () => {
-            editTodoForm(item, index);
-        })
+        if (item.title !== 'learn webkit' &&
+            item.title !== 'jog') {
+            todoDetails.addEventListener('click', () => {
+                editTodoForm(item, index);
+            })
+        }
         rightDiv.append(todoDetails);
         //if item was marked done, make sure to reflect that
         if (item.done === true) {
@@ -94,15 +97,19 @@ export function DisplayTodoList(l) {
         todoDelete.classList.add('delete');
         todoDelete.textContent = 'Delete';
         //if user clicks "delete", remove item from list, and update screen
-        todoDelete.addEventListener('click', () => {
-            l.splice(index, 1);
-            //update storage
-            localStorage.clear();
-            storeProjectsInLocal();
-            storeTodosInLocal();
-            //display latest todo list
-            DisplayTodoList(l);
-        })
+
+        if (item.title !== 'learn webkit' &&
+            item.title !== 'jog') {
+            todoDelete.addEventListener('click', () => {
+                l.splice(index, 1);
+                //update storage
+                localStorage.clear();
+                storeProjectsInLocal();
+                storeTodosInLocal();
+                //display latest todo list
+                DisplayTodoList(l);
+            })
+        }
         rightDiv.append(todoDelete);
         //if item was marked done, make sure to reflect that
         if (item.done === true) {
@@ -509,7 +516,7 @@ export function displayGymList() {
     //clear todo list
     container.textContent = '';
     //render todo items
-    listGym.forEach((item, index) => {
+    listGym.forEach((item) => {
         //create sub-container div
         const todoItem = document.createElement('div');
         todoItem.classList.add('todo-item');
